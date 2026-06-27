@@ -1,0 +1,23 @@
+{
+  "name": "inventory-management-system",
+  "version": "1.0.0",
+  "description": "A simple inventory management system using MERN.",
+  "homepage": "https://github.com/a3ela/inventory-management-system#readme",
+  "bugs": {
+    "url": "https://github.com/a3ela/inventory-management-system/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a3ela/inventory-management-system.git"
+  },
+  "license": "MIT",
+  "author": "Abel Sintayehu",
+  "type": "commonjs",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
