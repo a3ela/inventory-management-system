@@ -3,6 +3,7 @@ require("dotenv").config();
 const cors = require("cors");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
+const path = require("path");
 
 const app = express();
 
