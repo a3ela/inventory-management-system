@@ -15,7 +15,12 @@
   "type": "commonjs",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "server": "node --watch backend/server.js",
+    "client": "npm run dev --prefix frontend",
+    "install:all": "npm install && npm install --prefix frontend",
+    "build:all": "npm run build --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -23,5 +28,8 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "mongoose": "^9.7.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
   }
 }
