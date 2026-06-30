@@ -17,15 +17,10 @@ app.use("/api/users", require("./routes/user.routes"));
 app.use("/api/products", require("./routes/product.routes"));
 app.use("/api/transactions", require("./routes/transaction.routes"));
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ success: false, message: "Route not found" });
-});
-
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend/dist")));
 
-  app.get("*", (req, res) => {
+  app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
 } else {
@@ -33,6 +28,11 @@ if (process.env.NODE_ENV === "production") {
     res.send("API is running...");
   });
 }
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: "Route not found" });
+});
 
 // Error handler (must be last)
 app.use(errorHandler);
