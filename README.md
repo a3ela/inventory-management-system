@@ -10,7 +10,7 @@
 
 ## Overview
 
-A full-stack inventory management application built with React, Sass, Node.js, Express, and MongoDB. Features user registration, product management, inventory tracking, and transaction history.
+A full-stack inventory management application built with React, Scss, Node.js, Express, and MongoDB. Features user registration, product management, inventory tracking, and transaction history.
 
 ---
 
