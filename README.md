@@ -17,11 +17,9 @@ NODE_ENV=development
 ### 2. Installation
 Install dependencies for both folders:
 ```bash
-# Install backend dependencies
-npm install
+# Install backend/frontend dependencies
+npm run install:all
 
-# Install frontend dependencies
-cd frontend && npm install && cd ..
 ```
 
 ### 3. Running the App
