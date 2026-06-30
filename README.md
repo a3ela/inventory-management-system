@@ -39,11 +39,7 @@ MONGO_URI="your_mongodb_connection_string"
 NODE_ENV=development
 ```
 
-Create a separate `.env` file inside `frontend/` with:
 
-```env
-VITE_API_URL=http://localhost:5000
-```
 
 ### 3. Installation
 
