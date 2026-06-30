@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   MdOutlineKeyboardDoubleArrowLeft,
@@ -6,8 +5,6 @@ import {
   MdHome,
   MdPeople,
   MdInventory2,
-  MdPerson,
-  MdLogin,
   MdReceiptLong,
 } from "react-icons/md";
 
@@ -18,22 +15,15 @@ const navItems = [
   { path: "/transactions", label: "Transactions", icon: MdReceiptLong },
   { path: "/products", label: "Products", icon: MdInventory2 },
   { path: "/users", label: "Users", icon: MdPeople },
-  { path: "/profile", label: "Profile", icon: MdPerson },
-  { path: "/login", label: "Login", icon: MdLogin },
 ];
 
-const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
-
+const Sidebar = ({ collapsed, onToggle }) => {
   return (
     <aside className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
       <div className="sidebar__header">
         {!collapsed && <h1 className="sidebar__title">Inventory</h1>}
 
-        <button
-          className="sidebar__close-btn"
-          onClick={() => setCollapsed(!collapsed)}
-        >
+        <button className="sidebar__close-btn" onClick={onToggle}>
           {collapsed ? (
             <MdOutlineKeyboardDoubleArrowRight />
           ) : (
