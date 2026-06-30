@@ -1,75 +1,77 @@
 # Inventory Management System
 
-A minimal, responsive web application for managing users, products, and inventory stock changes.
+A production-ready, responsive MERN-stack web application designed for managing users, products, and real-time inventory stock alterations with an integrated audit ledger.
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-brightgreen)](https://inventory-management-system-3qxp.onrender.com/)
 
 ---
 
-## Local Setup
+## Local Development Setup
 
-### 1. Environment Variables
-Create a `.env` file in the root directory:
+### 1. Prerequisites
+Ensure you have [Node.js](https://nodejs.org/) (v18+ recommended) and a [MongoDB](https://www.mongodb.com/) instance ready.
+
+### 2. Environment Configurations
+Create a `.env` file in the root directory and populate it with the following environment variables:
+
 ```env
-PORT=3000
+PORT=5000
 MONGO_URI="your_mongodb_connection_string"
 NODE_ENV=development
 ```
 
-### 2. Installation
-Install dependencies for both folders:
+### 3. Installation
+
+Install all project dependencies across the root, backend, and frontend environments simultaneously:
+
 ```bash
-# Install backend/frontend dependencies
-npm run install:all
+npm install && npm install --prefix frontend
 
 ```
 
-### 3. Running the App
-Start both servers locally:
-```bash
-# Terminal 1: Start Backend API (Port 3000)
-npm start
+### 4. Executing the Application
 
-# Terminal 2: Start Frontend Dev Server
-cd frontend && npm run dev
+You can spin up both the Express backend API and Vite frontend development server concurrently using a single command:
+
+```bash
+npm run dev
 ```
 
----
 
-## Architecture Note
+## Architecture & System Design
+### Database Schema (MongoDB / Mongoose)
 
-### Database Schema (MongoDB/Mongoose)
+#### 1. User
+- fullname (String) - Required.
+- email (String) - Required, unique.
 
-1. **User**
-   - `fullname` (String)
-   - `email` (String, unique)
+#### 2. Product
+- sku (String) — Unique identifier.
+- name (String) — Required.
+- price (Number) — Asset valuation.
+- quantity (Number) — Current stock level (non-negative integer constraint).
+- createdBy (ObjectId) — Relation reference mapping to User.
 
-2. **Product**
-   - `sku` (String, unique)
-   - `name` (String)
-   - `price` (Number)
-   - `quantity` (Number, non-negative integer)
-   - `createdBy` (ObjectId, ref: User)
+### 3. Transaction(Audit Ledge)
+- product (ObjectId) — Relation reference mapping to Product.
+- changeAmount (Number) — Delta value of stock modification.
+- type (Enum) — Segregated into ["increase", "decrease", "initial"].
+- quantityAfter (Number) — Post-transaction snapshot of inventory levels.
+- performedBy (ObjectId) — Relation reference mapping to User.
 
-3. **Transaction** (Ledger)
-   - `product` (ObjectId, ref: Product)
-   - `changeAmount` (Number)
-   - `type` (Enum: "increase", "decrease", "initial")
-   - `quantityAfter` (Number)
-   - `performedBy` (ObjectId, ref: User)
+## API Specification
 
-### API Design
+| Endpoint | HTTP Method | Description |
+| :--- | :--- | :--- |
+| `/api/users` | `POST` | Register a new user platform profile |
+| `/api/users` | `GET` | Retrieve list of all platform users |
+| `/api/products` | `POST` | Register a new product (initializes "initial" ledger record if stock > 0) |
+| `/api/products` | `GET` | Retrieve list of all available products |
+| `/api/products/:id/stock` | `PATCH` | Modify existing inventory volume (blocks negative results, pushes ledger log) |
+| `/api/transactions` | `GET` | Retrieve comprehensive, paginated audit ledger history |
 
-- **Users**:
-  - `POST /api/users` - Register a new user
-  - `GET /api/users` - Fetch all users
-- **Products**:
-  - `POST /api/products` - Register a new product (creates an "initial" transaction if stock > 0)
-  - `GET /api/products` - Fetch all products
-  - `PATCH /api/products/:id/stock` - Adjust product stock level (prevents stock < 0, adds ledger record)
-- **Transactions**:
-  - `GET /api/transactions` - Fetch paginated audit ledger history
+### Technical Trade-Offs & Decisions
 
-### Technical Trade-Offs
-
-- **MERN Stack**: Handled with Node/Express and MongoDB to maximize rapid prototype development. 
-- **Controller-Level Validation Check**: Validates that stock adjustments won't result in a negative quantity during the update controller transaction step. At scale, atomic `$inc` updates with database schema boundary conditions would be utilized to prevent write race conditions.
-- **Redux Toolkit Query**: Used for centralized state caching and query auto-invalidation, keeping the user interface instantly in sync across the dashboard, ledger, and forms.
+- **MERN Architecture Selection**: Leveraged a Node/Express REST API and a decoupled React frontend to decouple concerns and accelerate rapid component scaffolding.
+- **Race Condition & Validation Handling**: Validation constraints are actively managed at the controller layer to verify that stock alterations do not fall beneath baseline zero logic. Note: In a high-concurrency production system, atomic database-level operations ($inc operators with strict validation rules) would be used to prevent write race conditions.
+- **State Operations via RTK Query**: Implemented Redux Toolkit Query for advanced server-state caching, background data synchronization, and automated query invalidation, keeping data unified across dashboard visuals, loggers, and form actions.
