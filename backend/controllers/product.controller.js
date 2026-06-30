@@ -25,9 +25,22 @@ const createProduct = async (req, res, next) => {
 
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find()
+    const { search } = req.query;
+    let filter = {};
+
+    if (search) {
+      filter = {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { sku: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
+
+    const products = await Product.find(filter)
       .populate("createdBy", "fullname email")
       .sort({ updatedAt: -1 });
+
     res.json({ success: true, data: products });
   } catch (err) {
     next(err);
