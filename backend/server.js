@@ -1,31 +1,37 @@
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
-
+const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
 
 const app = express();
 
-//middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Routes
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-//Error handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
+app.use("/api/users", require("./routes/user.routes"));
+app.use("/api/products", require("./routes/product.routes"));
+app.use("/api/transactions", require("./routes/transaction.routes"));
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: "Route not found" });
 });
+
+// Error handler (must be last)
+app.use(errorHandler);
 
 const startServer = async () => {
   await connectDB();
-
-  app.listen(process.env.PORT, () =>
-    console.log(`server is running on port ${process.env.PORT}`),
+  app.listen(process.env.PORT || 5000, () =>
+    console.log(`Server is running on port ${process.env.PORT || 5000}`),
   );
 };
 
