@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { MdAdd } from "react-icons/md";
+import { useState, useEffect } from "react";
+import { MdAdd, MdSearch } from "react-icons/md";
 import { useGetProductsQuery } from "../../features/productsApi";
 import Modal from "../../components/common/modal/modal";
 import Spinner from "../../components/common/spinner/Spinner";
@@ -8,9 +8,18 @@ import UpdateStockForm from "./UpdateStockForm";
 import "./Products.scss";
 
 const Products = () => {
-  const { data, isLoading, isError } = useGetProductsQuery();
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Debounce: wait 400ms after typing stops before triggering the API call
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(searchInput), 400);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  const { data, isLoading, isError } = useGetProductsQuery(search);
 
   const products = data?.data || [];
 
@@ -27,13 +36,25 @@ const Products = () => {
           <h1 className="products__title">Products</h1>
           <p className="products__subtitle">Manage your product inventory</p>
         </div>
-        <button
-          className="products__add-btn"
-          onClick={() => setShowAddModal(true)}
-        >
-          <MdAdd size={18} />
-          Add Product
-        </button>
+        <div className="products__header-actions">
+          <div className="products__search">
+            <MdSearch className="products__search-icon" />
+            <input
+              type="text"
+              placeholder="Search by name or SKU..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="products__search-input"
+            />
+          </div>
+          <button
+            className="products__add-btn"
+            onClick={() => setShowAddModal(true)}
+          >
+            <MdAdd size={18} />
+            Add Product
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -44,9 +65,13 @@ const Products = () => {
         </p>
       ) : products.length === 0 ? (
         <div className="products__empty">
-          <p className="products__empty-title">No products yet</p>
+          <p className="products__empty-title">
+            {search ? "No products match your search" : "No products yet"}
+          </p>
           <p className="products__empty-sub">
-            Click "Add Product" to get started
+            {search
+              ? "Try a different search term"
+              : 'Click "Add Product" to get started'}
           </p>
         </div>
       ) : (
